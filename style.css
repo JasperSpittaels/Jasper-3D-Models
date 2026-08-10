@@ -54,7 +54,7 @@ body {
     min-height: 600px;
     display: flex;
     align-items: center;
-    padding: 80px 10%;
+    padding: 60px 10%;
     background:
         radial-gradient(
             circle at 70% 50%,
@@ -104,7 +104,7 @@ body {
 }
 
 .models-section {
-    padding: 100px 7%;
+    padding: 50px 10%;
     background: #0b0b0d;
 }
 
@@ -189,7 +189,7 @@ body {
     }
 
     .hero {
-        min-height: 550px;
+        min-height: 300px;
     }
 }
 
@@ -206,12 +206,8 @@ body {
         height: 450px;
     }
 
-    .hero {
-        padding: 70px 7%;
-    }
-
     .models-section {
-        padding: 80px 5%;
+        padding: 50px 7%;
     }
 }
 
@@ -235,8 +231,7 @@ body {
     }
 
     .hero {
-        min-height: 500px;
-        padding: 60px 7%;
+        min-height: 300px;
     }
 
     .small-title {
@@ -255,7 +250,7 @@ body {
     }
 
     .models-section {
-        padding: 70px 5%;
+        padding: 50px 3%;
     }
 
     .section-title {
