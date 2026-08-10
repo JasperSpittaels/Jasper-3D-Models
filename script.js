@@ -2,23 +2,24 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+
 const models = [
     {
         canvas: "viewer1",
         loading: "loading1",
-        file: "./models/model1.glb"
+        file: "/Jasper-3D-Models/models/FerrariF40.glb"
     },
 
     {
         canvas: "viewer2",
         loading: "loading2",
-        file: "./models/model2.glb"
+        file: "/Jasper-3D-Models/models/Basketball.glb"
     },
 
     {
         canvas: "viewer3",
         loading: "loading3",
-        file: "./models/model3.glb"
+        file: "/Jasper-3D-Models/models/Chair.glb"
     }
 ];
 
@@ -29,18 +30,11 @@ const loader = new GLTFLoader();
 function createViewer(data) {
 
     const canvas = document.getElementById(data.canvas);
-
     const loading = document.getElementById(data.loading);
-
-
-    /* SCENE */
 
     const scene = new THREE.Scene();
 
     scene.background = new THREE.Color(0x080809);
-
-
-    /* CAMERA */
 
     const camera = new THREE.PerspectiveCamera(
         45,
@@ -50,9 +44,6 @@ function createViewer(data) {
     );
 
     camera.position.set(3, 2, 5);
-
-
-    /* RENDERER */
 
     const renderer = new THREE.WebGLRenderer({
         canvas: canvas,
@@ -71,9 +62,6 @@ function createViewer(data) {
     );
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-
-    /* LIGHTING */
 
     const ambientLight =
         new THREE.HemisphereLight(
@@ -114,9 +102,6 @@ function createViewer(data) {
 
     scene.add(fillLight);
 
-
-    /* CONTROLS */
-
     const controls =
         new OrbitControls(
             camera,
@@ -124,17 +109,12 @@ function createViewer(data) {
         );
 
     controls.enableDamping = true;
-
     controls.dampingFactor = 0.05;
 
     controls.minDistance = 1;
-
     controls.maxDistance = 20;
 
     controls.enablePan = false;
-
-
-    /* LOAD MODEL */
 
     loader.load(
 
@@ -145,12 +125,6 @@ function createViewer(data) {
             const model = gltf.scene;
 
             scene.add(model);
-
-
-            /*
-             * Automatically calculate
-             * model size.
-             */
 
             const box =
                 new THREE.Box3().setFromObject(model);
@@ -169,17 +143,7 @@ function createViewer(data) {
                     size.z
                 );
 
-
-            /*
-             * Center model
-             */
-
             model.position.sub(center);
-
-
-            /*
-             * Position camera
-             */
 
             camera.position.set(
                 maxDimension * 1.5,
@@ -195,7 +159,6 @@ function createViewer(data) {
             );
 
             controls.update();
-
 
             loading.style.display = "none";
 
@@ -233,9 +196,6 @@ function createViewer(data) {
 
     );
 
-
-    /* ANIMATION */
-
     function animate() {
 
         requestAnimationFrame(animate);
@@ -250,9 +210,6 @@ function createViewer(data) {
     }
 
     animate();
-
-
-    /* RESIZE */
 
     function resize() {
 
@@ -288,9 +245,6 @@ function createViewer(data) {
 
 models.forEach(createViewer);
 
-
-/* PRODUCT MODAL */
-
 function openProduct(id) {
 
     const modal =
@@ -303,38 +257,19 @@ function openProduct(id) {
             "modalTitle"
         );
 
-    const description =
-        document.getElementById(
-            "modalDescription"
-        );
-
-    const price =
-        document.getElementById(
-            "modalPrice"
-        );
-
 
     const products = {
 
         1: {
-            title: "Model One",
-            description:
-                "Game-ready 3D model with textures.",
-            price: "€5.00"
+            title: "Model One"
         },
 
         2: {
-            title: "Model Two",
-            description:
-                "Game-ready 3D model with textures.",
-            price: "€5.00"
+            title: "Model Two"
         },
 
         3: {
-            title: "Model Three",
-            description:
-                "Game-ready 3D model with textures.",
-            price: "€5.00"
+            title: "Model Three"
         }
 
     };
@@ -346,12 +281,6 @@ function openProduct(id) {
 
     title.textContent =
         product.title;
-
-    description.textContent =
-        product.description;
-
-    price.textContent =
-        product.price;
 
 
     modal.classList.add(
