@@ -4,23 +4,22 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 
 const models = [
+
     {
         canvas: "viewer1",
-        loading: "loading1",
         file: "/Jasper-3D-Models/models/FerrariF40.glb"
     },
 
     {
         canvas: "viewer2",
-        loading: "loading2",
         file: "/Jasper-3D-Models/models/Basketball.glb"
     },
 
     {
         canvas: "viewer3",
-        loading: "loading3",
         file: "/Jasper-3D-Models/models/Chair.glb"
     }
+
 ];
 
 
@@ -29,30 +28,50 @@ const loader = new GLTFLoader();
 
 function createViewer(data) {
 
-    const canvas = document.getElementById(data.canvas);
-    const loading = document.getElementById(data.loading);
+    const canvas =
+        document.getElementById(data.canvas);
 
-    const scene = new THREE.Scene();
+
+    // SCENE
+
+    const scene =
+        new THREE.Scene();
 
     scene.background = new THREE.Color(0x080809);
 
-    const camera = new THREE.PerspectiveCamera(
-        45,
-        canvas.clientWidth / canvas.clientHeight,
-        0.01,
-        1000
+
+    // CAMERA
+
+    const camera =
+        new THREE.PerspectiveCamera(
+            45,
+            canvas.clientWidth /
+            canvas.clientHeight,
+            0.01,
+            1000
+        );
+
+    camera.position.set(
+        3,
+        2,
+        5
     );
 
-    camera.position.set(3, 2, 5);
 
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: false
-    });
+    // RENDERER
+
+    const renderer =
+        new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: false
+        });
 
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, 2)
+        Math.min(
+            window.devicePixelRatio,
+            2
+        )
     );
 
     renderer.setSize(
@@ -61,16 +80,37 @@ function createViewer(data) {
         false
     );
 
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.outputColorSpace =
+        THREE.SRGBColorSpace;
 
-    const ambientLight =
-        new THREE.HemisphereLight(
-            0xffffff,
-            0x222222,
-            3
-        );
 
-    scene.add(ambientLight);
+    // LIGHTING
+
+    // Sky light
+	const skyLight = new THREE.HemisphereLight(
+		0x87CEEB,
+		0x444444,
+		1.5
+	);
+
+	scene.add(skyLight);
+
+
+	// Sun light
+	const sunLight = new THREE.DirectionalLight(
+		0xffffff,
+		2
+	);
+
+	sunLight.position.set(
+		5,
+		10,
+		5
+	);
+
+	sunLight.castShadow = true;
+
+	scene.add(sunLight);
 
 
     const keyLight =
@@ -102,6 +142,9 @@ function createViewer(data) {
 
     scene.add(fillLight);
 
+
+    // CONTROLS
+
     const controls =
         new OrbitControls(
             camera,
@@ -109,12 +152,17 @@ function createViewer(data) {
         );
 
     controls.enableDamping = true;
+
     controls.dampingFactor = 0.05;
 
     controls.minDistance = 1;
+
     controls.maxDistance = 20;
 
     controls.enablePan = false;
+
+
+    // LOAD MODEL
 
     loader.load(
 
@@ -122,18 +170,28 @@ function createViewer(data) {
 
         function(gltf) {
 
-            const model = gltf.scene;
+            const model =
+                gltf.scene;
 
             scene.add(model);
+			
+			model.rotation.y = Math.PI;
+
+            // Calculate size
 
             const box =
-                new THREE.Box3().setFromObject(model);
+                new THREE.Box3()
+                    .setFromObject(model);
 
             const center =
-                box.getCenter(new THREE.Vector3());
+                box.getCenter(
+                    new THREE.Vector3()
+                );
 
             const size =
-                box.getSize(new THREE.Vector3());
+                box.getSize(
+                    new THREE.Vector3()
+                );
 
 
             const maxDimension =
@@ -143,7 +201,15 @@ function createViewer(data) {
                     size.z
                 );
 
-            model.position.sub(center);
+
+            // Center model
+
+            model.position.sub(
+                center
+            );
+
+
+            // Camera
 
             camera.position.set(
                 maxDimension * 1.5,
@@ -160,26 +226,9 @@ function createViewer(data) {
 
             controls.update();
 
-            loading.style.display = "none";
-
         },
 
-        function(progress) {
-
-            if (progress.total > 0) {
-
-                const percent =
-                    Math.round(
-                        (progress.loaded /
-                        progress.total) * 100
-                    );
-
-                loading.textContent =
-                    `Loading ${percent}%`;
-
-            }
-
-        },
+        undefined,
 
         function(error) {
 
@@ -189,16 +238,18 @@ function createViewer(data) {
                 error
             );
 
-            loading.textContent =
-                "Failed to load model";
-
         }
 
     );
 
+
+    // ANIMATION
+
     function animate() {
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(
+            animate
+        );
 
         controls.update();
 
@@ -210,6 +261,9 @@ function createViewer(data) {
     }
 
     animate();
+
+
+    // RESIZE
 
     function resize() {
 
@@ -243,61 +297,6 @@ function createViewer(data) {
 }
 
 
-models.forEach(createViewer);
-
-function openProduct(id) {
-
-    const modal =
-        document.getElementById(
-            "productModal"
-        );
-
-    const title =
-        document.getElementById(
-            "modalTitle"
-        );
-
-
-    const products = {
-
-        1: {
-            title: "Model One"
-        },
-
-        2: {
-            title: "Model Two"
-        },
-
-        3: {
-            title: "Model Three"
-        }
-
-    };
-
-
-    const product =
-        products[id];
-
-
-    title.textContent =
-        product.title;
-
-
-    modal.classList.add(
-        "active"
-    );
-
-}
-
-
-function closeProduct() {
-
-    document
-        .getElementById("productModal")
-        .classList.remove("active");
-
-}
-
-
-window.openProduct = openProduct;
-window.closeProduct = closeProduct;
+models.forEach(
+    createViewer
+);

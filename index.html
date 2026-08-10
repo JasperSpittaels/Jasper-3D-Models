@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,20 +12,26 @@
 
 <body>
 
-<header class="navbar">
-    <div class="logo">Jasper's 3D Models</div>
+    <nav class="navbar">
 
-    <nav>
-        <a href="#models">Models</a>
+        <div class="logo">
+            JASPER'S 3D MODELS
+        </div>
+
+        <nav>
+            <a href="#models">Models</a>
+        </nav>
+
     </nav>
-</header>
 
-
-<main>
 
     <section class="hero">
+
         <div>
-            <p class="small-title">DIGITAL 3D ASSETS</p>
+
+            <p class="small-title">
+                DIGITAL 3D ASSETS
+            </p>
 
             <h1>
                 Jasper's<br>
@@ -34,132 +41,72 @@
             <a href="#models" class="hero-button">
                 Explore Models
             </a>
+
         </div>
+
     </section>
 
 
     <section id="models" class="models-section">
 
         <div class="section-title">
+
             <p>MY COLLECTION</p>
+
             <h2>3D Models</h2>
+
         </div>
 
 
         <div class="model-grid">
 
+
             <article class="model-card">
 
                 <div class="viewer">
                     <canvas id="viewer1"></canvas>
-
-                    <div class="loading" id="loading1">
-                        Loading...
-                    </div>
                 </div>
 
                 <div class="model-info">
-				
-                    <h3>Model One</h3>
-
-                    <div class="model-bottom">
-					
-                        <button onclick="openProduct(1)">
-                            View
-                        </button>
-
-                    </div>
-
+                    <h3>Ferrari F40</h3>
                 </div>
 
             </article>
-			
-			<article class="model-card">
+
+
+            <article class="model-card">
 
                 <div class="viewer">
-                    <canvas id="viewer1"></canvas>
-
-                    <div class="loading" id="loading1">
-                        Loading...
-                    </div>
+                    <canvas id="viewer2"></canvas>
                 </div>
 
                 <div class="model-info">
-				
-                    <h3>Model One</h3>
-
-                    <div class="model-bottom">
-					
-                        <button onclick="openProduct(1)">
-                            View
-                        </button>
-
-                    </div>
-
+                    <h3>Basketball</h3>
                 </div>
 
             </article>
-			
-			<article class="model-card">
+
+
+            <article class="model-card">
 
                 <div class="viewer">
-                    <canvas id="viewer1"></canvas>
-
-                    <div class="loading" id="loading1">
-                        Loading...
-                    </div>
+                    <canvas id="viewer3"></canvas>
                 </div>
 
                 <div class="model-info">
-				
-                    <h3>Model One</h3>
-
-                    <div class="model-bottom">
-					
-                        <button onclick="openProduct(1)">
-                            View
-                        </button>
-
-                    </div>
-
+                    <h3>Chair</h3>
                 </div>
 
             </article>
+
 
         </div>
 
     </section>
 
-</main>
 
-<div id="productModal" class="modal">
-
-    <div class="modal-content">
-
-        <button class="close" onclick="closeProduct()">
-            ×
-        </button>
-
-        <h2 id="modalTitle">Model</h2>
-
-        <p id="modalDescription">
-            3D model information.
-        </p>
-
-        <div class="modal-price" id="modalPrice">
-            €5.00
-        </div>
-
-        <button class="buy-button">
-            Buy Model
-        </button>
-
-    </div>
-
-</div>
-
-
-<script type="module" src="script.js"></script>
+    <script type="module" src="script.js"></script>
 
 </body>
+
 </html>
