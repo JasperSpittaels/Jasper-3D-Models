@@ -1,302 +1,761 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-
 const models = [
 
     {
-        canvas: "viewer1",
-        file: "/Jasper-3D-Models/models/FerrariF40.glb"
+        title: "Ferrari F40",
+
+        image:
+            "/Jasper-3D-Models/images/ferrari_f40.webp"
     },
 
-    {
-        canvas: "viewer2",
-        file: "/Jasper-3D-Models/models/Basketball.glb"
-    },
 
     {
-        canvas: "viewer3",
-        file: "/Jasper-3D-Models/models/Chair.glb"
+        title: "Chair",
+
+        image:
+            "/Jasper-3D-Models/images/chair.webp"
+    },
+
+
+    {
+        title: "Basketball",
+
+        image:
+            "/Jasper-3D-Models/images/basketball.webp"
     }
 
 ];
 
 
-const loader = new GLTFLoader();
+
+/* =========================================
+   DOM ELEMENTS
+========================================= */
 
 
-function createViewer(data) {
-
-    const canvas =
-        document.getElementById(data.canvas);
-
-
-    // SCENE
-
-    const scene =
-        new THREE.Scene();
-
-    scene.background = new THREE.Color(0x080809);
-
-
-    // CAMERA
-
-    const camera =
-        new THREE.PerspectiveCamera(
-            45,
-            canvas.clientWidth /
-            canvas.clientHeight,
-            0.01,
-            1000
-        );
-
-    camera.position.set(
-        3,
-        2,
-        5
+const modelGrid =
+    document.getElementById(
+        "modelGrid"
     );
 
 
-    // RENDERER
-
-    const renderer =
-        new THREE.WebGLRenderer({
-            canvas: canvas,
-            antialias: true,
-            alpha: false
-        });
-
-    renderer.setPixelRatio(
-        Math.min(
-            window.devicePixelRatio,
-            2
-        )
+const emptyState =
+    document.getElementById(
+        "emptyState"
     );
 
-    renderer.setSize(
-        canvas.clientWidth,
-        canvas.clientHeight,
-        false
+
+const modelCount =
+    document.getElementById(
+        "modelCount"
     );
 
-    renderer.outputColorSpace =
-        THREE.SRGBColorSpace;
 
-
-    // LIGHTING
-
-    // Sky light
-	const skyLight = new THREE.HemisphereLight(
-		0x87CEEB,
-		0x444444,
-		1.5
-	);
-
-	scene.add(skyLight);
-
-
-	// Sun light
-	const sunLight = new THREE.DirectionalLight(
-		0xffffff,
-		2
-	);
-
-	sunLight.position.set(
-		5,
-		10,
-		5
-	);
-
-	sunLight.castShadow = true;
-
-	scene.add(sunLight);
-
-
-    const keyLight =
-        new THREE.DirectionalLight(
-            0xffffff,
-            4
-        );
-
-    keyLight.position.set(
-        5,
-        8,
-        5
+const modal =
+    document.getElementById(
+        "modelModal"
     );
 
-    scene.add(keyLight);
 
-
-    const fillLight =
-        new THREE.DirectionalLight(
-            0xffffff,
-            2
-        );
-
-    fillLight.position.set(
-        -5,
-        3,
-        -5
+const modalImage =
+    document.getElementById(
+        "modalImage"
     );
 
-    scene.add(fillLight);
+
+const modalTitle =
+    document.getElementById(
+        "modalTitle"
+    );
 
 
-    // CONTROLS
-
-    const controls =
-        new OrbitControls(
-            camera,
-            renderer.domElement
-        );
-
-    controls.enableDamping = true;
-
-    controls.dampingFactor = 0.05;
-
-    controls.minDistance = 1;
-
-    controls.maxDistance = 20;
-
-    controls.enablePan = false;
+const modalClose =
+    document.getElementById(
+        "modalClose"
+    );
 
 
-    // LOAD MODEL
+const modalBackdrop =
+    document.getElementById(
+        "modalBackdrop"
+    );
 
-    loader.load(
 
-        data.file,
+const menuButton =
+    document.getElementById(
+        "menuButton"
+    );
 
-        function(gltf) {
 
-            const model =
-                gltf.scene;
+const navigation =
+    document.getElementById(
+        "navigation"
+    );
 
-            scene.add(model);
-			
-			model.rotation.y = Math.PI;
 
-            // Calculate size
+const currentYear =
+    document.getElementById(
+        "currentYear"
+    );
 
-            const box =
-                new THREE.Box3()
-                    .setFromObject(model);
 
-            const center =
-                box.getCenter(
-                    new THREE.Vector3()
-                );
 
-            const size =
-                box.getSize(
-                    new THREE.Vector3()
+/* =========================================
+   STATE
+========================================= */
+
+
+let lastFocusedElement = null;
+
+
+
+/* =========================================
+   RENDER MODELS
+========================================= */
+
+
+function renderModels() {
+
+    modelGrid.innerHTML = "";
+
+
+    /*
+        Update model count.
+    */
+
+    const amount =
+        models.length;
+
+
+    modelCount.textContent =
+        `${amount} ${
+            amount === 1
+                ? "Model"
+                : "Models"
+        }`;
+
+
+    /*
+        Empty state.
+    */
+
+    if (amount === 0) {
+
+        emptyState.hidden = false;
+
+        modelGrid.hidden = true;
+
+        return;
+    }
+
+
+    emptyState.hidden = true;
+
+    modelGrid.hidden = false;
+
+
+    /*
+        Create cards.
+    */
+
+    models.forEach(
+        (model, index) => {
+
+            const card =
+                createModelCard(
+                    model,
+                    index
                 );
 
 
-            const maxDimension =
-                Math.max(
-                    size.x,
-                    size.y,
-                    size.z
-                );
-
-
-            // Center model
-
-            model.position.sub(
-                center
-            );
-
-
-            // Camera
-
-            camera.position.set(
-                maxDimension * 1.5,
-                maxDimension * 0.8,
-                maxDimension * 1.5
-            );
-
-
-            controls.target.set(
-                0,
-                0,
-                0
-            );
-
-            controls.update();
-
-        },
-
-        undefined,
-
-        function(error) {
-
-            console.error(
-                "Failed to load:",
-                data.file,
-                error
+            modelGrid.appendChild(
+                card
             );
 
         }
-
-    );
-
-
-    // ANIMATION
-
-    function animate() {
-
-        requestAnimationFrame(
-            animate
-        );
-
-        controls.update();
-
-        renderer.render(
-            scene,
-            camera
-        );
-
-    }
-
-    animate();
-
-
-    // RESIZE
-
-    function resize() {
-
-        const width =
-            canvas.clientWidth;
-
-        const height =
-            canvas.clientHeight;
-
-
-        camera.aspect =
-            width / height;
-
-        camera.updateProjectionMatrix();
-
-
-        renderer.setSize(
-            width,
-            height,
-            false
-        );
-
-    }
-
-
-    window.addEventListener(
-        "resize",
-        resize
     );
 
 }
 
 
-models.forEach(
-    createViewer
+
+/* =========================================
+   CREATE MODEL CARD
+========================================= */
+
+
+function createModelCard(
+    model,
+    index
+) {
+
+
+    /*
+        Article/card.
+    */
+
+    const article =
+        document.createElement(
+            "article"
+        );
+
+
+    article.className =
+        "model-card";
+
+
+    /*
+        Make the card keyboard accessible.
+    */
+
+    article.tabIndex = 0;
+
+
+    article.setAttribute(
+        "role",
+        "button"
+    );
+
+
+    article.setAttribute(
+        "aria-label",
+        `Open ${model.title}`
+    );
+
+
+
+    /* =====================================
+       IMAGE WRAPPER
+    ===================================== */
+
+
+    const imageWrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    imageWrapper.className =
+        "model-image-wrapper";
+
+
+
+    /* =====================================
+       IMAGE
+    ===================================== */
+
+
+    const image =
+        document.createElement(
+            "img"
+        );
+
+
+    image.className =
+        "model-image";
+
+
+    image.src =
+        model.image;
+
+
+    image.alt =
+        `${model.title} 3D render`;
+
+
+    /*
+        First 3 images are loaded immediately.
+
+        Other images are loaded when they
+        approach the viewport.
+    */
+
+    image.loading =
+        index < 3
+            ? "eager"
+            : "lazy";
+
+
+    image.decoding =
+        "async";
+
+
+    /*
+        Your renders are 1080 x 1080.
+    */
+
+    image.width = 1080;
+
+    image.height = 1080;
+
+
+
+    /* =====================================
+       IMAGE ERROR HANDLING
+    ===================================== */
+
+
+    image.addEventListener(
+        "error",
+        () => {
+
+            image.alt =
+                `${model.title} render unavailable`;
+
+        }
+    );
+
+
+
+    /* =====================================
+       BUILD IMAGE
+    ===================================== */
+
+
+    imageWrapper.appendChild(
+        image
+    );
+
+
+
+    /* =====================================
+       TITLE
+    ===================================== */
+
+
+    const information =
+        document.createElement(
+            "div"
+        );
+
+
+    information.className =
+        "model-information";
+
+
+    const title =
+        document.createElement(
+            "h3"
+        );
+
+
+    title.className =
+        "model-title";
+
+
+    title.textContent =
+        model.title;
+
+
+    information.appendChild(
+        title
+    );
+
+
+
+    /* =====================================
+       BUILD CARD
+    ===================================== */
+
+
+    article.appendChild(
+        imageWrapper
+    );
+
+
+    article.appendChild(
+        information
+    );
+
+
+
+    /* =====================================
+       MOUSE CLICK
+    ===================================== */
+
+
+    article.addEventListener(
+        "click",
+        () => {
+
+            openModal(model);
+
+        }
+    );
+
+
+
+    /* =====================================
+       KEYBOARD
+    ===================================== */
+
+
+    article.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+
+                openModal(model);
+
+            }
+
+        }
+    );
+
+
+    return article;
+
+}
+
+
+
+/* =========================================
+   OPEN MODAL
+========================================= */
+
+
+function openModal(model) {
+
+
+    /*
+        Remember which card was focused.
+
+        This allows keyboard users to return
+        to the card after closing the modal.
+    */
+
+    lastFocusedElement =
+        document.activeElement;
+
+
+
+    /*
+        Set image.
+    */
+
+    modalImage.src =
+        model.image;
+
+
+    modalImage.alt =
+        `${model.title} 3D render`;
+
+
+    /*
+        Set title.
+    */
+
+    modalTitle.textContent =
+        model.title;
+
+
+
+    /*
+        Open modal.
+    */
+
+    modal.classList.add(
+        "open"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+
+    /*
+        Prevent page scrolling behind modal.
+    */
+
+    document.body.style.overflow =
+        "hidden";
+
+
+
+    /*
+        Focus close button.
+    */
+
+    modalClose.focus();
+
+}
+
+
+
+/* =========================================
+   CLOSE MODAL
+========================================= */
+
+
+function closeModal() {
+
+
+    modal.classList.remove(
+        "open"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    /*
+        Restore page scrolling.
+    */
+
+    document.body.style.overflow =
+        "";
+
+
+    /*
+        Clear image.
+
+        This allows the browser to release
+        the image when the modal is closed.
+    */
+
+    modalImage.src = "";
+
+
+    modalImage.alt = "";
+
+
+    modalTitle.textContent = "";
+
+
+
+    /*
+        Return keyboard focus to the card.
+    */
+
+    if (
+        lastFocusedElement &&
+        typeof lastFocusedElement.focus === "function"
+    ) {
+
+        lastFocusedElement.focus();
+
+    }
+
+
+    lastFocusedElement = null;
+
+}
+
+
+
+/* =========================================
+   MODAL EVENTS
+========================================= */
+
+
+/*
+    Close button.
+*/
+
+modalClose.addEventListener(
+    "click",
+    closeModal
 );
+
+
+/*
+    Click outside image.
+*/
+
+modalBackdrop.addEventListener(
+    "click",
+    closeModal
+);
+
+
+/*
+    ESC key.
+*/
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            modal.classList.contains("open")
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+
+function closeNavigation() {
+
+    navigation.classList.remove(
+        "open"
+    );
+
+
+    menuButton.classList.remove(
+        "active"
+    );
+
+
+    menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+}
+
+
+
+/*
+    Open/close mobile navigation.
+*/
+
+menuButton.addEventListener(
+    "click",
+    () => {
+
+        const isOpen =
+            navigation.classList.toggle(
+                "open"
+            );
+
+
+        menuButton.classList.toggle(
+            "active",
+            isOpen
+        );
+
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            String(isOpen)
+        );
+
+    }
+);
+
+
+
+/*
+    Close navigation when
+    clicking a navigation link.
+*/
+
+navigation
+    .querySelectorAll("a")
+    .forEach(
+        (link) => {
+
+            link.addEventListener(
+                "click",
+                closeNavigation
+            );
+
+        }
+    );
+
+
+
+/*
+    Close mobile menu when clicking
+    outside of it.
+*/
+
+document.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            !navigation.classList.contains(
+                "open"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            navigation.contains(
+                event.target
+            ) ||
+            menuButton.contains(
+                event.target
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        closeNavigation();
+
+    }
+);
+
+
+
+/*
+    Close mobile menu with ESC.
+*/
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Escape" &&
+            navigation.classList.contains(
+                "open"
+            )
+        ) {
+
+            closeNavigation();
+
+            menuButton.focus();
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   CURRENT YEAR
+========================================= */
+
+
+currentYear.textContent =
+    new Date().getFullYear();
+
+
+
+/* =========================================
+   START WEBSITE
+========================================= */
+
+
+renderModels();
