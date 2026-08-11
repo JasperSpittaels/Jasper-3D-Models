@@ -1,4 +1,5 @@
 @echo off
+git config user.name "JasperSpittaels"
 git add .
 git commit -m "Deploy Jasper 3D Models"
 git branch -M main
