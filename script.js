@@ -21,6 +21,20 @@ const models = [
 
         image:
             "/Jasper-3D-Models/images/basketball.webp"
+    },
+	
+	{
+        title: "Tree",
+
+        image:
+            "/Jasper-3D-Models/images/tree.webp"
+    },
+	
+	{
+        title: "Fork",
+
+        image:
+            "/Jasper-3D-Models/images/fork.webp"
     }
 
 ];
@@ -259,15 +273,7 @@ function createModelCard(
 
 
     image.alt =
-        `${model.title} 3D render`;
-
-
-    /*
-        First 3 images are loaded immediately.
-
-        Other images are loaded when they
-        approach the viewport.
-    */
+        `${model.title}`;
 
     image.loading =
         index < 3
@@ -278,31 +284,9 @@ function createModelCard(
     image.decoding =
         "async";
 
-
-    /*
-        Your renders are 1080 x 1080.
-    */
-
     image.width = 1080;
 
     image.height = 1080;
-
-
-
-    /* =====================================
-       IMAGE ERROR HANDLING
-    ===================================== */
-
-
-    image.addEventListener(
-        "error",
-        () => {
-
-            image.alt =
-                `${model.title} render unavailable`;
-
-        }
-    );
 
 
 
